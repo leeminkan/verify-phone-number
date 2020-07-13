@@ -23,10 +23,18 @@ class PhoneController extends Controller
             $data = $request->all();
             $response = $this->client->sendVerificationCode($data["phoneNumber"], $data["recapchaToken"]);
             $body = json_decode($response->getBody(),true);
-            $verification = Verification::create([
+            $verification = Verification::where([
                 'phone' => $data["phoneNumber"],
-                'session_info' => $body["sessionInfo"],
-            ]);
+            ])->first();
+            if ($verification) {
+                $verification->session_info = $body["sessionInfo"];
+                $verification->save();
+            } else {
+                $verification = Verification::create([
+                    'phone' => $data["phoneNumber"],
+                    'session_info' => $body["sessionInfo"],
+                ]);
+            }
             return $verification;
         } catch (ClientException $e) {
             if ($e->getResponse()->getStatusCode() == 400 && array_key_exists("error", json_decode($e->getResponse()->getBody(),true))) {
