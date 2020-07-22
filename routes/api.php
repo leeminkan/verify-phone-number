@@ -20,3 +20,4 @@ Route::middleware('auth:api')->get('/user', function (Request $request) {
 
 Route::post('send-code', 'PhoneController@sendVerificationCode');
 Route::post('verify-code', 'PhoneController@verifyPhoneNumber');
+Route::post('verify-idToken', 'PhoneController@verifyIdToken');

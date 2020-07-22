@@ -39,4 +39,17 @@ window.onload = function() {
             console.log(error);
         });
     });
+
+    buttonVerify = document.getElementById('vefiryIdToken');
+    buttonVerify.addEventListener('click', function() {
+        axios.post('http://localhost:8000/api/verify-idToken', {
+            idToken: document.getElementById('idToken').value,
+        })
+        .then(function (response) {
+            console.log(response);
+        })
+        .catch(function (error) {
+            console.log(error);
+        });
+    });
 };
