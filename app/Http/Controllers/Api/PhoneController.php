@@ -8,14 +8,17 @@ use App\Helper\GoogleApiIdentityClient;
 use App\Verification;
 use GuzzleHttp\Exception\ClientException;
 use GuzzleHttp\Psr7;
+use App\Helper\FirebaseAuth;
 
 class PhoneController extends Controller
 {
     protected $client;
+    protected $auth;
 
-    public function __construct(GoogleApiIdentityClient $client)
+    public function __construct(GoogleApiIdentityClient $client, FirebaseAuth $auth)
     {
         $this->client = $client;
+        $this->auth = $auth;
     }
 
     public function sendVerificationCode(Request $request) {
@@ -78,6 +81,17 @@ class PhoneController extends Controller
                         return json_decode($e->getResponse()->getBody(),true);
                   }
             }
+        }
+        catch (\Exception $e) {
+            return "error: " .$e->getMessage();
+        }
+    }
+
+    public function verifyIdToken(Request $request) {
+        try {
+            $data = $request->all();
+            $result = $this->auth->verifyIdToken($data['idToken']);
+            return $result;
         }
         catch (\Exception $e) {
             return "error: " .$e->getMessage();
